@@ -1,61 +1,75 @@
-import 'dart:math';
+class Node<T> {
+  T? nodeValue; // Menyimpan data
+  Node<T>? next; // Menunjuk ke node berikutnya
 
-void main() {
-  List<num> data = List.generate(10, (index) => Random().nextInt(100));
-  
-  print("Data sebelum diurutkan:");
-  printData(data);
+  // Konstruktor default
+  Node() {
+    nodeValue = null;
+    next = null;
+  }
 
-  // Quick Sort Ascending
-  List<num> ascendingData = List.from(data);
-  DateTime startTimeAsc = DateTime.now();
-  quickSort(ascendingData, 0, ascendingData.length - 1, true);
-  Duration elapsedTimeAsc = DateTime.now().difference(startTimeAsc);
-  
-  print("\nData setelah Quick Sort Ascending:");
-  printData(ascendingData);
-  print('Waktu: ${elapsedTimeAsc.inMilliseconds} ms');
-
-  // Quick Sort Descending
-  List<num> descendingData = List.from(data);
-  DateTime startTimeDesc = DateTime.now();
-  quickSort(descendingData, 0, descendingData.length - 1, false);
-  Duration elapsedTimeDesc = DateTime.now().difference(startTimeDesc);
-  
-  print("\nData setelah Quick Sort Descending:");
-  printData(descendingData);
-  print('Waktu: ${elapsedTimeDesc.inMilliseconds} ms');
-}
-
-void quickSort<T extends Comparable<T>>(List<T> arr, int p, int r, bool ascending) {
-  if (p < r) {
-    int q = partition(arr, p, r, ascending);
-    quickSort(arr, p, q, ascending);
-    quickSort(arr, q + 1, r, ascending);
+  // Konstruktor dengan nilai
+  Node.withValue(T item) {
+    nodeValue = item;
+    next = null;
   }
 }
 
-int partition<T extends Comparable<T>>(List<T> arr, int p, int r, bool ascending) {
-  int i = p, j = r;
-  T pivot = arr[p];
+// Kelas SingleLinkedList
+class SingleLinkedList<T> {
+  Node<T>? head; // Menunjuk ke node pertama
 
-  while (i <= j) {
-    while (ascending ? pivot.compareTo(arr[j]) < 0 : pivot.compareTo(arr[j]) > 0) j--;
-    while (ascending ? pivot.compareTo(arr[i]) > 0 : pivot.compareTo(arr[i]) < 0) i++;
-    
-    if (i < j) {
-      T temp = arr[i];
-      arr[i] = arr[j];
-      arr[j] = temp;
-      j--;
-      i++;
+  // Menambahkan node ke akhir list
+  void append(T value) {
+    var newNode = Node<T>.withValue(value);
+    if (head == null) {
+      head = newNode;
     } else {
-      return j;
+      var current = head;
+      while (current!.next != null) {
+        current = current.next;
+      }
+      current.next = newNode;
     }
   }
-  return j;
-}
 
-void printData<T>(List<T> data) {
-  print(data.join(', '));
+  // Menampilkan semua nilai dalam linked list
+  void printList() {
+    var current = head;
+    while (current != null) {
+      print(current.nodeValue);
+      current = current.next;
+    }
+  }
+
+  // Menghapus node pertama dengan nilai tertentu
+  void delete(T value) {
+    if (head == null) return;
+
+    if (head!.nodeValue == value) {
+      head = head!.next;
+      return;
+    }
+
+    var current = head;
+    while (current!.next != null && current.next!.nodeValue != value) {
+      current = current.next;
+    }
+
+    if (current.next != null) {
+      current.next = current.next!.next;
+    }
+  }
+
+  // Mencari apakah sebuah nilai ada dalam list
+  bool contains(T value) {
+    var current = head;
+    while (current != null) {
+      if (current.nodeValue == value) {
+        return true;
+      }
+      current = current.next;
+    }
+    return false;
+  }
 }
